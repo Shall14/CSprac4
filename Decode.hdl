@@ -26,27 +26,27 @@ CHIP Decode {
 
 PARTS:
     // Determine the instruction type based on MSB (in[15])
-    // If in[15] = 0 -> A-instruction (type = 0), else C-instruction (type = 1)
     Or(a=in[15], b=false, out=type);  // type = in[15]
 
     // For C-instruction (type = 1), extract control signals
     Mux(a=false, b=in[12], sel=type, out=a);    // a = in[12] if C-instruction
     Mux(a=false, b=in[11], sel=type, out=c1);   // c1 = in[11] if C-instruction
     Mux(a=false, b=in[10], sel=type, out=c2);   // c2 = in[10] if C-instruction
-    Mux(a=false, b=in[9], sel=type, out=c3);    // c3 = in[9] if C-instruction
-    Mux(a=false, b=in[8], sel=type, out=c4);    // c4 = in[8] if C-instruction
-    Mux(a=false, b=in[7], sel=type, out=c5);    // c5 = in[7] if C-instruction
-    Mux(a=false, b=in[6], sel=type, out=c6);    // c6 = in[6] if C-instruction
+    Mux(a=false, b=in[9],  sel=type, out=c3);   // c3 = in[9] if C-instruction
+    Mux(a=false, b=in[8],  sel=type, out=c4);   // c4 = in[8] if C-instruction
+    Mux(a=false, b=in[7],  sel=type, out=c5);   // c5 = in[7] if C-instruction
+    Mux(a=false, b=in[6],  sel=type, out=c6);   // c6 = in[6] if C-instruction
 
-    Mux(a=false, b=in[5], sel=type, out=d1);    // d1 = in[5] if C-instruction
-    Mux(a=false, b=in[4], sel=type, out=d2);    // d2 = in[4] if C-instruction
-    Mux(a=false, b=in[3], sel=type, out=d3);    // d3 = in[3] if C-instruction
+    Mux(a=false, b=in[5],  sel=type, out=d1);    // d1 = in[5] if C-instruction
+    Mux(a=false, b=in[4],  sel=type, out=d2);    // d2 = in[4] if C-instruction
+    Mux(a=false, b=in[3],  sel=type, out=d3);    // d3 = in[3] if C-instruction
 
-    Mux(a=false, b=in[2], sel=type, out=j1);    // j1 = in[2] if C-instruction
-    Mux(a=false, b=in[1], sel=type, out=j2);    // j2 = in[1] if C-instruction
-    Mux(a=false, b=in[0], sel=type, out=j3);    // j3 = in[0] if C-instruction
+    Mux(a=false, b=in[2],  sel=type, out=j1);    // j1 = in[2] if C-instruction
+    Mux(a=false, b=in[1],  sel=type, out=j2);    // j2 = in[1] if C-instruction
+    Mux(a=false, b=in[0],  sel=type, out=j3);    // j3 = in[0] if C-instruction
 
-    // For A-instruction (type = 0), set d1 = 1 and all other signals to 0
-    Not(in=type, out=notType);                  // notType is 1 when it's an A-instruction
-    And(a=notType, b=true, out=d1);             // d1 = 1 for A-instruction, 0 for C-instruction
+    // For A-instruction (type = 0):
+    // Set d1 = 1 for A-instructions (load A register), all other control signals are 0.
+    Not(in=type, out=notType);             // notType is 1 when it's an A-instruction
+    And(a=notType, b=true, out=d1);        // d1 = 1 for A-instruction (type = 0)
 }
