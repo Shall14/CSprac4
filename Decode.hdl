@@ -25,5 +25,21 @@ CHIP Decode {
         j1,j2,j3;           // Jump wires
 
 PARTS:
-    // Put your code here:
+    And (a=in [15], b=true, out=write);
+    And (a=in [15], b=in [12], out=a);
+    And (a=in [15], b=in [11], out=x1);
+    And (a=in [15], b=in [10], out=x2);
+    And (a=in [15], b=in [9], out=x3) ;
+    And (a=in [15], b=in [8], out=x4) ;
+    And (a=in [15], b=in [7], out=x5) ;
+    And (a=in [15], b=in [6], out=x6) ;
+    Not (in=in [15], out=ni15);
+    Or (a=ni15, b=in [5], out=ya1);
+    And (a=in [15], b=in [5], out=yb1);
+    Mux(a=ya1, b=yb1, sel=in [15], out=z1);
+    And (a=in [15], b=in [4], out=z2);
+    And (a=in [15], b=in [3], out=z3) ;
+    And (a=in [15], b=in [2], out=jmp1);
+    And (a=in [15], b=in [1], out=jmp2);
+    And (a=in [15], b=in [0], out=jmp3);
 }
