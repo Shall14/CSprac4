@@ -27,11 +27,19 @@ CHIP Jump {
     OUT jump;           // true if a jump should be performed, false otherwise 
 
 PARTS:
-    IN isC, jumpBits[3], zr, ng;
-    OUT out;
-    PARTS:
-    And (a=j1, b=ng, out=JLT);
-    Not (in=nx, out=isx) ;
-    And (a=j3, b=xpos , out=JGT) ;
-    Or (a=JGT, b=JLE, out=jmp); 
+    // Condition 1: Jump if ALU output is < 0 and j1 is true
+    And(a=j1, b=ng, out=jumpJLT);
+
+    // Condition 2: Jump if ALU output == 0 and j2 is true
+    And(a=j2, b=zr, out=jumpJEQ);
+
+    // Condition 3: Jump if ALU output is > 0 (not zero and not negative) and j3 is true
+    Not(in=zr, out=notZr);     // ALU output is not zero
+    Not(in=ng, out=notNg);     // ALU output is not negative
+    And(a=notZr, b=notNg, out=pos); // ALU output is > 0 (positive)
+    And(a=j3, b=pos, out=jumpJGT);
+
+    // Combine all jump conditions
+    Or(a=jumpJLT, b=jumpJEQ, out=or1);
+    Or(a=or1, b=jumpJGT, out=jump);
 }
