@@ -27,5 +27,11 @@ CHIP Jump {
     OUT jump;           // true if a jump should be performed, false otherwise 
 
 PARTS:
-    // Put your code here:
+    IN isC, jumpBits[3], zr, ng;
+    OUT out;
+    PARTS:
+    And (a=j1, b=ng, out=JLT);
+    Not (in=nx, out=isx) ;
+    And (a=j3, b=xpos , out=JGT) ;
+    Or (a=JGT, b=JLE, out=jmp); 
 }
