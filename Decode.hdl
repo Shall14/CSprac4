@@ -25,31 +25,29 @@ CHIP Decode {
         j1,j2,j3;           // Jump wires
 
 PARTS:
-     // Determine the instruction type: 
-    // If the MSB (in[15]) is 0, it's an A-instruction (type = 0)
-    // If the MSB (in[15]) is 1, it's a C-instruction (type = 1)
-    Not(in=in[15], out=type);  // type = 0 for A-instruction, 1 for C-instruction
+    /// Determine the instruction type based on MSB (in[15])
+    // If in[15] = 0 -> A-instruction, else C-instruction
+    Or(a=in[15], b=false, out=type); // type = in[15]
 
     // For C-instruction (type = 1):
-    // a comes from in[12], c1..c6 come from in[11..6], 
-    // d1..d3 come from in[5..3], and j1..j3 come from in[2..0]
-    Mux16(a=false, b=in[12], sel=in[15], out[0..0]=a);  // a = in[12] when type = 1 (C-instruction)
-    Mux16(a=false, b=in[11], sel=in[15], out[0..0]=c1); // c1 = in[11] when type = 1
-    Mux16(a=false, b=in[10], sel=in[15], out[0..0]=c2); // c2 = in[10] when type = 1
-    Mux16(a=false, b=in[9],  sel=in[15], out[0..0]=c3); // c3 = in[9] when type = 1
-    Mux16(a=false, b=in[8],  sel=in[15], out[0..0]=c4); // c4 = in[8] when type = 1
-    Mux16(a=false, b=in[7],  sel=in[15], out[0..0]=c5); // c5 = in[7] when type = 1
-    Mux16(a=false, b=in[6],  sel=in[15], out[0..0]=c6); // c6 = in[6] when type = 1
+    // Extract the corresponding bits from the input instruction.
+    Mux(a=false, b=in[12], sel=type, out=a);   // a = in[12] if C-instruction
+    Mux(a=false, b=in[11], sel=type, out=c1);  // c1 = in[11] if C-instruction
+    Mux(a=false, b=in[10], sel=type, out=c2);  // c2 = in[10] if C-instruction
+    Mux(a=false, b=in[9],  sel=type, out=c3);  // c3 = in[9] if C-instruction
+    Mux(a=false, b=in[8],  sel=type, out=c4);  // c4 = in[8] if C-instruction
+    Mux(a=false, b=in[7],  sel=type, out=c5);  // c5 = in[7] if C-instruction
+    Mux(a=false, b=in[6],  sel=type, out=c6);  // c6 = in[6] if C-instruction
 
-    Mux16(a=false, b=in[5],  sel=in[15], out[0..0]=d1); // d1 = in[5] when type = 1
-    Mux16(a=false, b=in[4],  sel=in[15], out[0..0]=d2); // d2 = in[4] when type = 1
-    Mux16(a=false, b=in[3],  sel=in[15], out[0..0]=d3); // d3 = in[3] when type = 1
+    Mux(a=false, b=in[5],  sel=type, out=d1);  // d1 = in[5] if C-instruction
+    Mux(a=false, b=in[4],  sel=type, out=d2);  // d2 = in[4] if C-instruction
+    Mux(a=false, b=in[3],  sel=type, out=d3);  // d3 = in[3] if C-instruction
 
-    Mux16(a=false, b=in[2],  sel=in[15], out[0..0]=j1); // j1 = in[2] when type = 1
-    Mux16(a=false, b=in[1],  sel=in[15], out[0..0]=j2); // j2 = in[1] when type = 1
-    Mux16(a=false, b=in[0],  sel=in[15], out[0..0]=j3); // j3 = in[0] when type = 1
+    Mux(a=false, b=in[2],  sel=type, out=j1);  // j1 = in[2] if C-instruction
+    Mux(a=false, b=in[1],  sel=type, out=j2);  // j2 = in[1] if C-instruction
+    Mux(a=false, b=in[0],  sel=type, out=j3);  // j3 = in[0] if C-instruction
 
-    // For A-instruction (type = 0): 
-    // d1 = 1, d2, d3, j1, j2, j3, a, c1..c6 are all set to 0
-    Or(a=false, b=in[15], out=d1); // d1 = 1 for A-instruction, 0 for C-instruction
+    // For A-instruction (type = 0), only d1 should be 1
+    Not(in=type, out=notType); // notType is 1 when it's an A-instruction
+    And(a=notType, b=true, out=d1); // d1 = 1 when it's an A-instruction
 }
